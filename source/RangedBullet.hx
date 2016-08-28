@@ -36,7 +36,7 @@ class RangedBullet extends Bullet
         angle = Angle;
         // angularVelocity = (angle > 0) ? 5 : -5;
         // angularAcceleration = angularVelocity * 2;
-        // velocity = FlxVelocity.velocityFromAngle(angle - 90, speed);
+        velocity = FlxVelocity.velocityFromAngle(angle - 90, speed);
 
         return this;
     }

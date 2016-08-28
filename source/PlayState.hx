@@ -27,7 +27,7 @@ class PlayState extends FlxState
 
 	// Level
 	public static var tilemap: FlxTilemap;
-	var floorCount = 500;
+	var floorCount = 50;
 	var map: Array<Array<Int>>;
 	var levelCollidable: FlxGroup;
 
@@ -113,7 +113,7 @@ class PlayState extends FlxState
 		enemyBullets = new FlxTypedGroup<Bullet>(100);
 		// enemyBullets.maxSize = 100;
 
-		// spawnEnemies();
+		spawnEnemies();
 	}
 
 	public function setupPlayer():Void
@@ -129,13 +129,13 @@ class PlayState extends FlxState
     public function setupLevel():Void
     {
     	// var floorTileType = Reg.TILE_FLOOR;
-    	var floorVariations = [26,27,28];
 
     	tilemap = new FlxTilemap();
-		tilemap.setCustomTileMappings([0,2], [2], [floorVariations]);
+    	tilemap.useScaleHack = true;
+		tilemap.setCustomTileMappings([0,Reg.TILE_FLOOR], [Reg.TILE_FLOOR], [Reg.TILE_FLOOR_VARIATIONS]);
 		tilemap.loadMapFrom2DArray(map, "assets/images/LD36_Tilesheet.png", 16, 16);
 		// tilemap.loadMapFrom2DArray(map, "assets/images/tiles_white.png", 16, 16);
-		trace(tilemap.width+ ' ' + tilemap.height);
+		// trace(tilemap.width+ ' ' + tilemap.height);
 
 		FlxG.worldBounds.width = (tilemap.widthInTiles + 1) * Reg.T_WIDTH;
 		FlxG.worldBounds.height = (tilemap.heightInTiles + 1) * Reg.T_HEIGHT;
@@ -143,11 +143,22 @@ class PlayState extends FlxState
 		tilemap.setTileProperties(0,FlxObject.ANY);
 		tilemap.setTileProperties(1,FlxObject.NONE);
 		tilemap.setTileProperties(2,FlxObject.NONE);
+
+		// Floor variations
+		tilemap.setTileProperties(26,FlxObject.NONE);
+		tilemap.setTileProperties(27,FlxObject.NONE);
+		tilemap.setTileProperties(28,FlxObject.NONE);
 	}
 
 	public function spawnEnemies()
 	{
-		var floorIndices = tilemap.getTileInstances(Reg.TILE_FLOOR);
+		var floorIndices = [];
+
+		for(floorTile in Reg.TILE_FLOOR_VARIATIONS) {
+			for(tileIndex in tilemap.getTileInstances(floorTile)){
+				floorIndices.push(tileIndex);
+			}
+		}
 
 		trace(floorIndices);
 
@@ -189,7 +200,7 @@ class PlayState extends FlxState
 					looper.destroy();
 
 					map = floorMaker.map;
-
+					trace(map);
 					setupGame();
 				}
 			}
@@ -252,7 +263,7 @@ class PlayState extends FlxState
 	public function onCollision(Object1: FlxObject, Object2: FlxObject):Void
 	{
 		if(Std.is(Object1,Player)) {
-			// player.moving = false;
+			player.resetPosition();
 		}
 
 		if(Std.is(Object1, Bullet)){

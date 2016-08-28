@@ -18,6 +18,7 @@ class Player extends FlxSprite
 	public var movespeed:Float = 8;
 	public var moving:Bool = false;
 	var targetPosition:FlxPoint;
+	var previousPosition:FlxPoint;
 
 	// Attack stuff
 	var canAttack:Bool;
@@ -82,29 +83,31 @@ class Player extends FlxSprite
 
 	public function updateMovements():Void
 	{
-		if(moving){
-			FlxVelocity.accelerateTowardsPoint(this, targetPosition, 200, 1000);
-			trace(x + ', ' + y + ' -> ' + targetPosition);
-		} else {
-			acceleration.x = 0;
-			acceleration.y = 0;
-			trace('done');
-		}
-
-		// if(moving) {
-		// 	switch(facing)
-		// 	{
-		// 		case FlxObject.UP: y -= movespeed;
-		// 		case FlxObject.DOWN: y += movespeed;
-		// 		case FlxObject.LEFT: x -= movespeed;
-		// 		case FlxObject.RIGHT: x += movespeed;
-		// 	}
-
-		// 	if ((x % Reg.T_WIDTH == 0) && (y % Reg.T_HEIGHT == 0))
-		// 	{
-		// 		moving = false;
-		// 	}
+		// if(moving){
+		// 	FlxVelocity.moveTowardsPoint(this, targetPosition);
+		// 	// trace(x + ', ' + y + ' -> ' + targetPosition);
+		// } else {
+		// 	acceleration.x = 0;
+		// 	acceleration.y = 0;
+		// 	// trace('done');
 		// }
+
+		//  -------
+
+		if(moving) {
+			switch(facing)
+			{
+				case FlxObject.UP: y -= movespeed;
+				case FlxObject.DOWN: y += movespeed;
+				case FlxObject.LEFT: x -= movespeed;
+				case FlxObject.RIGHT: x += movespeed;
+			}
+
+			if ((x % Reg.T_WIDTH == 0) && (y % Reg.T_HEIGHT == 0))
+			{
+				moving = false;
+			}
+		}
 	}
 
 	public function attackControls():Void
@@ -117,20 +120,21 @@ class Player extends FlxSprite
 	public function move(TargetFacing:Int):Void
 	{
 		// trace(Reg.enemyTargetTiles);
+		previousPosition = new FlxPoint(x,y);
 
 		if(!moving) {
 			facing = TargetFacing;
 			moving = true;
 
-			switch(facing)
-			{
-				case FlxObject.UP: targetPosition = new FlxPoint(x,y - Reg.T_HEIGHT);
-				case FlxObject.DOWN: targetPosition = new FlxPoint(x,y + Reg.T_HEIGHT);
-				case FlxObject.LEFT: targetPosition = new FlxPoint(x - Reg.T_WIDTH,y);
-				case FlxObject.RIGHT: targetPosition = new FlxPoint(x + Reg.T_WIDTH,y);
-			}
+			// switch(facing)
+			// {
+			// 	case FlxObject.UP: targetPosition = new FlxPoint(x,y - Reg.T_HEIGHT);
+			// 	case FlxObject.DOWN: targetPosition = new FlxPoint(x,y + Reg.T_HEIGHT);
+			// 	case FlxObject.LEFT: targetPosition = new FlxPoint(x - Reg.T_WIDTH,y);
+			// 	case FlxObject.RIGHT: targetPosition = new FlxPoint(x + Reg.T_WIDTH,y);
+			// }
 
-			trace(x + ', ' + y + ' -> ' + targetPosition);
+			// trace(x + ', ' + y + ' -> ' + targetPosition);
 
 			PlayState.moveAllEnemies();
 		}
@@ -191,5 +195,11 @@ class Player extends FlxSprite
 
 	private function enableAttack(Timer:FlxTimer):Void{
 		canAttack = true;
+	}
+
+	public function resetPosition():Void
+	{
+		moving = false;
+		setPosition(previousPosition.x, previousPosition.y);
 	}
 }

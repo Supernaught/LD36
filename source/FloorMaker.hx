@@ -44,7 +44,6 @@ class FloorMaker
 
 		initializeFloor();
 		// generateNextFloor();
-		// trace(map);
 	}
 
 	public function initializeFloor():Void
