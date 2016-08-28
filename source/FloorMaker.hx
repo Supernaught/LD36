@@ -40,8 +40,6 @@ class FloorMaker
 		xPos = Math.round(mapWidth / 2);
 		yPos = Math.round(mapHeight / 2);
 
-		trace('xy of tilemap: ' + xPos + ' ' + yPos);
-
 		initializeFloor();
 		// generateNextFloor();
 	}
@@ -50,10 +48,10 @@ class FloorMaker
 	{
 		map = new Array<Array<Int>>();
 
-		for(y in 0...mapHeight) {
+		for(y in 0...mapHeight+1) {
 			var row: Array<Int> = [];
 
-			for(x in 0...mapWidth) {
+			for(x in 0...mapWidth+1) {
 				row.insert(x, Reg.TILE_EMPTY);
 			}
 

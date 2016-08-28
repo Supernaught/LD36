@@ -17,7 +17,7 @@ class Player extends FlxSprite
 	// Movement stuff
 	public var movespeed:Float = 8;
 	public var moving:Bool = false;
-	var targetPosition:FlxPoint;
+	public var targetPosition:FlxPoint;
 	var previousPosition:FlxPoint;
 
 	// Attack stuff
@@ -50,6 +50,8 @@ class Player extends FlxSprite
 		setFacingFlip(FlxObject.RIGHT, false, false);
 
 		// loadGraphic("assets/images/Hero_Sprite.png");
+
+		trace(X, Y);
 	}
 
 	override public function update(elapsed:Float):Void
@@ -126,27 +128,27 @@ class Player extends FlxSprite
 			facing = TargetFacing;
 			moving = true;
 
-			// switch(facing)
-			// {
-			// 	case FlxObject.UP: targetPosition = new FlxPoint(x,y - Reg.T_HEIGHT);
-			// 	case FlxObject.DOWN: targetPosition = new FlxPoint(x,y + Reg.T_HEIGHT);
-			// 	case FlxObject.LEFT: targetPosition = new FlxPoint(x - Reg.T_WIDTH,y);
-			// 	case FlxObject.RIGHT: targetPosition = new FlxPoint(x + Reg.T_WIDTH,y);
-			// }
+			switch(facing)
+			{
+				case FlxObject.UP: targetPosition = new FlxPoint(x,y - Reg.T_HEIGHT);
+				case FlxObject.DOWN: targetPosition = new FlxPoint(x,y + Reg.T_HEIGHT);
+				case FlxObject.LEFT: targetPosition = new FlxPoint(x - Reg.T_WIDTH,y);
+				case FlxObject.RIGHT: targetPosition = new FlxPoint(x + Reg.T_WIDTH,y);
+			}
 
 			// trace(x + ', ' + y + ' -> ' + targetPosition);
 
 			PlayState.moveAllEnemies();
 		}
 
-		// trace("Moved to: " + x + ' ' + y);		
+		// trace("Moved to: " + x/16 + ' ' + y/16);		
 	}
 
-	public function movedToTargetPosition():Bool
-	{
-		trace(Math.abs(x - targetPosition.x));
-		return Math.floor(Math.abs(x - targetPosition.x)) <= 0 && Math.floor(Math.abs(y - targetPosition.y)) <= 0;
-	}
+	// public function movedToTargetPosition():Bool
+	// {
+	// 	trace(Math.abs(x - targetPosition.x));
+	// 	return Math.floor(Math.abs(x - targetPosition.x)) <= 0 && Math.floor(Math.abs(y - targetPosition.y)) <= 0;
+	// }
 
 	// ATTACK STUFF
 

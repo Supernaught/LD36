@@ -31,6 +31,9 @@ class Enemy extends FlxSprite
     // Player target
     var player:Player;
 
+    // Tilemap reference
+    var tilemap:FlxTilemap;
+
     var random:FlxRandom;
 
 	public function new(X:Int = 64, Y:Int = 64)
@@ -47,13 +50,14 @@ class Enemy extends FlxSprite
 		// loadGraphic(Reg.PLAYER_SPRITE, null, 16, 16);
 	}
 
-	public function init(X:Float, Y:Float, EnemyBullets:FlxTypedGroup<Bullet>, Player:Player)
+	public function init(X:Float, Y:Float, EnemyBullets:FlxTypedGroup<Bullet>, Player:Player, Tilemap:FlxTilemap)
 	{
 		x = X;
         y = Y;
 
         enemyBullets = EnemyBullets;
         player = Player;
+        tilemap = Tilemap;
 	}
 
 	override public function update(elapsed:Float):Void
@@ -87,7 +91,7 @@ class Enemy extends FlxSprite
 	{
 	    var currentTileIndex = Tilemap.getTileIndexByCoords(new FlxPoint(x,y));
 
-		targetDirection = random.getObject([FlxObject.NONE, FlxObject.RIGHT, FlxObject.LEFT, FlxObject.UP, FlxObject.DOWN]);
+	    getTargetDirection(Tilemap);
 
 		var targetCoords = new FlxPoint(0,0);
 
@@ -100,9 +104,17 @@ class Enemy extends FlxSprite
 		}
 
 		var targetTileIndex = Tilemap.getTileIndexByCoords(targetCoords);
+
+		// if target tile is already occupied, cancel target tile
+		if(Reg.enemyTargetTiles.indexOf(targetTileIndex) != -1){
+			targetTileIndex = currentTileIndex;
+			targetDirection = FlxObject.NONE;
+		}
+
+		Reg.enemyTargetTiles.remove(currentTileIndex);
 		Reg.enemyTargetTiles.push(targetTileIndex);
 
-		trace(currentTileIndex + ' -> ' + targetTileIndex);
+		// trace(currentTileIndex + ' -> ' + targetTileIndex);
 	}
 
 	public function move():Void
@@ -132,9 +144,19 @@ class Enemy extends FlxSprite
 		}
 	}
 
+	public function getTargetDirection(Tilemap:FlxTilemap):Void
+	{
+		targetDirection = random.getObject([FlxObject.NONE, FlxObject.RIGHT, FlxObject.LEFT, FlxObject.UP, FlxObject.DOWN]);
+	}
+
 	public function resetPosition():Void
 	{
 		moving = false;
 		setPosition(previousPosition.x, previousPosition.y);
+	}
+
+	public function getCurrentTileIndex():Int
+	{
+		return tilemap.getTileIndexByCoords(new FlxPoint(x,y));
 	}
 }

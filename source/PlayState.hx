@@ -27,7 +27,7 @@ class PlayState extends FlxState
 
 	// Level
 	public static var tilemap: FlxTilemap;
-	var floorCount = 50;
+	var floorCount = 30;
 	var map: Array<Array<Int>>;
 	var levelCollidable: FlxGroup;
 
@@ -58,6 +58,7 @@ class PlayState extends FlxState
 	public function setupGame():Void
 	{
 		remove(loadingText);
+		// loadingText.text = "";
 		loadingText = null;
 
 		setupLevel();
@@ -160,14 +161,13 @@ class PlayState extends FlxState
 			}
 		}
 
-		trace(floorIndices);
-
-		var enemiesToSpawn = 2;
+		var enemiesToSpawn = 1;
 
 		for(i in 0...enemiesToSpawn){
 			var randomIndex = random.getObject(floorIndices);
 			var coord = tilemap.getTileCoordsByIndex(randomIndex, false);
-			enemies.recycle(Enemy).init(coord.x, coord.y, enemyBullets, player);
+			enemies.recycle(EnemyPopcorn2).init(coord.x, coord.y, enemyBullets, player, tilemap);
+			// enemies.recycle(EnemyPopcorn2).init(coord.x, coord.y, enemyBullets, player, tilemap);
 		}
 	}
 
@@ -195,12 +195,11 @@ class PlayState extends FlxState
 				looper.start();
 			} else {
 				if(looper.finished){
-					trace('done');
 					looper.kill();
 					looper.destroy();
 
 					map = floorMaker.map;
-					trace(map);
+					// trace(map);
 					setupGame();
 				}
 			}
@@ -298,13 +297,23 @@ class PlayState extends FlxState
 
 	public static function moveAllEnemies() {
 		Reg.enemyTargetTiles = [];
+
+		// First populate enemyTargetTiles with the current positions
+		enemies.forEachAlive(declareCurrentPositionAsOccupied);
 		enemies.forEachAlive(moveEnemy);
-		trace(Reg.enemyTargetTiles);
+	}
+
+	public static function declareCurrentPositionAsOccupied(Enemy:Enemy):Void
+	{
+	    Reg.enemyTargetTiles.push(tilemap.getTileIndexByCoords(new FlxPoint(Enemy.x,Enemy.y)));
 	}
 
 	public static function moveEnemy(Enemy:Enemy):Void
 	{
+		// Next set target tiles to available tiles in the array
 		Enemy.setTargetTile(tilemap);
+
+		// Then execute the moves
 		Enemy.move();
 	}
 }
