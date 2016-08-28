@@ -22,9 +22,10 @@ class Enemy extends FlxSprite
     var attackDelay:Float;
 
 	// Movement stuff
-	public var movespeed:Float = 2;
+	public var movespeed:Float = 4;
 	public var moving:Bool = false;
 	var targetPosition:FlxPoint;
+	var previousPosition:FlxPoint;
 	var targetDirection:Int;
 
     // Player target
@@ -42,6 +43,7 @@ class Enemy extends FlxSprite
 
 		// makeGraphic(16,16, FlxColor.RED);
 		makeGraphic(16,16, FlxColor.RED);
+		previousPosition = new FlxPoint(x, y);
 		// loadGraphic(Reg.PLAYER_SPRITE, null, 16, 16);
 	}
 
@@ -91,23 +93,23 @@ class Enemy extends FlxSprite
 
 		switch(targetDirection)
 		{
-			case FlxObject.UP: targetCoords = new FlxPoint(x, y -= 16);
-			case FlxObject.DOWN: targetCoords = new FlxPoint(x, y += 16);
-			case FlxObject.LEFT: targetCoords = new FlxPoint(x -= 16, y);
-			case FlxObject.RIGHT: targetCoords = new FlxPoint(x += 16, y);
+			case FlxObject.UP: targetCoords = new FlxPoint(x, y - 16);
+			case FlxObject.DOWN: targetCoords = new FlxPoint(x, y + 16);
+			case FlxObject.LEFT: targetCoords = new FlxPoint(x - 16, y);
+			case FlxObject.RIGHT: targetCoords = new FlxPoint(x + 16, y);
 		}
 
 		var targetTileIndex = Tilemap.getTileIndexByCoords(targetCoords);
 		Reg.enemyTargetTiles.push(targetTileIndex);
 
-		// trace(currentTileIndex + ' -> ' + targetTileIndex);
+		trace(currentTileIndex + ' -> ' + targetTileIndex);
 	}
 
 	public function move():Void
 	{
-		facing = targetDirection;
-
+		previousPosition = new FlxPoint(x, y);
 		if(!moving && targetDirection != FlxObject.NONE) {
+			facing = targetDirection;
 			moving = true;
 		}
 	}
@@ -133,7 +135,6 @@ class Enemy extends FlxSprite
 	public function resetPosition():Void
 	{
 		moving = false;
-		x = Math.round(x/16) * 16;
-		y = Math.round(y/16) * 16;
+		setPosition(previousPosition.x, previousPosition.y);
 	}
 }

@@ -180,7 +180,7 @@ class PlayState extends FlxState
 		// levelCollidable.add(enemyGibs);
 		// levelCollidable.add(whiteGibs);
 		levelCollidable.add(player);
-		levelCollidable.add(enemies);
+		// levelCollidable.add(enemies);
 	}
 
 
@@ -244,6 +244,7 @@ class PlayState extends FlxState
 	public function handleCollisions():Void
 	{
 		FlxG.collide(levelCollidable, tilemap, onCollision);
+		FlxG.collide(enemies, tilemap, enemyCollideWall);
 		// FlxG.overlap(enemies, tilemap, enemyCollideWall);
 		// FlxG.collide(player, enemies, onCollision);
 
@@ -256,8 +257,7 @@ class PlayState extends FlxState
 
 	public function enemyCollideWall(Enemy:Enemy, Map:FlxObject):Void
 	{
-		trace('overlap');
-		// Enemy.resetPosition();
+		Enemy.resetPosition();
 	}
 
 	public function onCollision(Object1: FlxObject, Object2: FlxObject):Void
