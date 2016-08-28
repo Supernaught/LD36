@@ -27,7 +27,7 @@ class PlayState extends FlxState
 
 	// Level
 	public static var tilemap: FlxTilemap;
-	var floorCount = 50;
+	var floorCount = 500;
 	var map: Array<Array<Int>>;
 	var levelCollidable: FlxGroup;
 
@@ -41,6 +41,8 @@ class PlayState extends FlxState
 	override public function create():Void
 	{
 		super.create();
+
+		FlxG.camera.bgColor = 0xff1e214a;
 
 		var ext = 20;
 		FlxG.camera.setSize(FlxG.width + ext, FlxG.height + ext);
@@ -111,7 +113,7 @@ class PlayState extends FlxState
 		enemyBullets = new FlxTypedGroup<Bullet>(100);
 		// enemyBullets.maxSize = 100;
 
-		spawnEnemies();
+		// spawnEnemies();
 	}
 
 	public function setupPlayer():Void
@@ -126,12 +128,13 @@ class PlayState extends FlxState
 
     public function setupLevel():Void
     {
-    	var floorTileType = 2;
-    	var floorVariations = [1,2,3];
+    	// var floorTileType = Reg.TILE_FLOOR;
+    	var floorVariations = [26,27,28];
 
     	tilemap = new FlxTilemap();
-		// tilemap.setCustomTileMappings([0,floorTileType], [floorTileType], [floorVariations]);
-		tilemap.loadMapFrom2DArray(map, "assets/images/tiles_white.png", 16, 16);
+		tilemap.setCustomTileMappings([0,2], [2], [floorVariations]);
+		tilemap.loadMapFrom2DArray(map, "assets/images/LD36_Tilesheet.png", 16, 16);
+		// tilemap.loadMapFrom2DArray(map, "assets/images/tiles_white.png", 16, 16);
 		trace(tilemap.width+ ' ' + tilemap.height);
 
 		FlxG.worldBounds.width = (tilemap.widthInTiles + 1) * Reg.T_WIDTH;
@@ -145,6 +148,8 @@ class PlayState extends FlxState
 	public function spawnEnemies()
 	{
 		var floorIndices = tilemap.getTileInstances(Reg.TILE_FLOOR);
+
+		trace(floorIndices);
 
 		var enemiesToSpawn = 2;
 
@@ -247,7 +252,7 @@ class PlayState extends FlxState
 	public function onCollision(Object1: FlxObject, Object2: FlxObject):Void
 	{
 		if(Std.is(Object1,Player)) {
-			player.moving = false;
+			// player.moving = false;
 		}
 
 		if(Std.is(Object1, Bullet)){

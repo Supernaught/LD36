@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
+import flixel.math.FlxVelocity;
 import flixel.group.FlxGroup;
 import flixel.util.FlxTimer;
 
@@ -46,6 +47,8 @@ class Player extends FlxSprite
 
 		setFacingFlip(FlxObject.LEFT, true, false);
 		setFacingFlip(FlxObject.RIGHT, false, false);
+
+		// loadGraphic("assets/images/Hero_Sprite.png");
 	}
 
 	override public function update(elapsed:Float):Void
@@ -79,20 +82,29 @@ class Player extends FlxSprite
 
 	public function updateMovements():Void
 	{
-		if(moving) {
-			switch(facing)
-			{
-				case FlxObject.UP: y -= movespeed;
-				case FlxObject.DOWN: y += movespeed;
-				case FlxObject.LEFT: x -= movespeed;
-				case FlxObject.RIGHT: x += movespeed;
-			}
-
-			if ((x % Reg.T_WIDTH == 0) && (y % Reg.T_HEIGHT == 0))
-			{
-				moving = false;
-			}
+		if(moving){
+			FlxVelocity.accelerateTowardsPoint(this, targetPosition, 200, 1000);
+			trace(x + ', ' + y + ' -> ' + targetPosition);
+		} else {
+			acceleration.x = 0;
+			acceleration.y = 0;
+			trace('done');
 		}
+
+		// if(moving) {
+		// 	switch(facing)
+		// 	{
+		// 		case FlxObject.UP: y -= movespeed;
+		// 		case FlxObject.DOWN: y += movespeed;
+		// 		case FlxObject.LEFT: x -= movespeed;
+		// 		case FlxObject.RIGHT: x += movespeed;
+		// 	}
+
+		// 	if ((x % Reg.T_WIDTH == 0) && (y % Reg.T_HEIGHT == 0))
+		// 	{
+		// 		moving = false;
+		// 	}
+		// }
 	}
 
 	public function attackControls():Void
@@ -110,17 +122,18 @@ class Player extends FlxSprite
 			facing = TargetFacing;
 			moving = true;
 
-			PlayState.moveAllEnemies();
-			// switch(facing)
-			// {
-			// 	case FlxObject.UP: velocity.y = -movespeed; targetPosition = new FlxPoint(x,y - Reg.T_HEIGHT);
-			// 	case FlxObject.DOWN: velocity.y = movespeed; targetPosition = new FlxPoint(x,y + Reg.T_HEIGHT);
-			// 	case FlxObject.LEFT: velocity.x = -movespeed; targetPosition = new FlxPoint(x - Reg.T_WIDTH,y);
-			// 	case FlxObject.RIGHT: velocity.x = movespeed; targetPosition = new FlxPoint(x + Reg.T_WIDTH,y);
-			// }
-		}
+			switch(facing)
+			{
+				case FlxObject.UP: targetPosition = new FlxPoint(x,y - Reg.T_HEIGHT);
+				case FlxObject.DOWN: targetPosition = new FlxPoint(x,y + Reg.T_HEIGHT);
+				case FlxObject.LEFT: targetPosition = new FlxPoint(x - Reg.T_WIDTH,y);
+				case FlxObject.RIGHT: targetPosition = new FlxPoint(x + Reg.T_WIDTH,y);
+			}
 
-		moving = true;
+			trace(x + ', ' + y + ' -> ' + targetPosition);
+
+			PlayState.moveAllEnemies();
+		}
 
 		// trace("Moved to: " + x + ' ' + y);		
 	}
